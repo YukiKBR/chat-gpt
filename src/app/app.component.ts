@@ -47,23 +47,13 @@ export class AppComponent  implements OnInit, AfterViewInit {
   apiKey = signal<string | null>(null);
   input = model<string>('');
   openai!: OpenAI
-  store: Store;
+  store!: Store;
 
   @ViewChild('chatList', { static: false }) chatList!: ElementRef<HTMLElement>;
 
   constructor(
     private dialog: Dialog,
   ) {
-    this.store = new Store("/settings.bat");
-    this.store.get<string>('api-key').then((apiKey) => {
-      if(apiKey) {
-        this.openai = new OpenAI({ 
-          apiKey,
-          dangerouslyAllowBrowser: true,
-         });
-      }
-    })
-
     hljs.highlightAll();
   }
   async ngOnInit() {

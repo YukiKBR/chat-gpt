@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main # 簡単のため main に変更
+      - dev
 
 jobs:
   publish-tauri:
