@@ -27,7 +27,7 @@
         <div class="flex-1 flex flex-col justify-start gap-12">
           @for(log of inputLog(); track log) {
             @if(log.type === 'user') {
-              <div @fadeIn>
+              <div>
                 <div class="flex gap-4 items-center group">
                   <span class="material-symbols-outlined">
                     person
@@ -41,7 +41,7 @@
               </div>
 
             } @else {
-              <div @fadeIn>
+              <div>
                 <div class="flex gap-4">
                   <span class="material-symbols-outlined">
                     robot_2

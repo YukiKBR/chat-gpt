@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, effect, model, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, effect, model, signal } from '@angular/core';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS, DatePipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import Database from "tauri-plugin-sql-api";
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {Dialog, DialogModule} from '@angular/cdk/dialog'; 
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { SettingDialogComponent } from './dialogs/setting-dialog/setting-dialog.component';
@@ -10,28 +10,23 @@ import OpenAI from 'openai';
 import { Store } from 'tauri-plugin-store-api';
 import { ChatComponent } from './chat/chat.component';
 import hljs from 'highlight.js';
-import { trigger } from '@angular/animations';
-import { transition } from '@angular/animations';
-import { style } from '@angular/animations';
-import { animate } from '@angular/animations';
-import { query } from '@angular/animations';
-import { stagger } from '@angular/animations';
 import { ModelSelectComponent } from './model-select/model-select.component';
+
+type UserType = 'user' | 'bot';
 
 type Chat = {
   msg: string,
-  type: 'user' | 'bot',
+  type: UserType,
   timestamp: Date
 }
 
 type ChatLog = {
   id: string,
   message: string,
-  type: 'user' | 'bot',
+  type: UserType,
   created_at: string,
   updated_at: string,
 }
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -41,20 +36,8 @@ type ChatLog = {
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        query('li', [
-          style({ opacity: 0, transform: 'translateY(50%)' }),
-          stagger(100, [
-            animate('1s ease', style({ opacity: 1, transform: 'translateY(0)' }))
-          ])
-        ])
-      ]),
-    ])
-  ]
 })
-export class AppComponent  implements OnInit, AfterViewInit, OnDestroy {
+export class AppComponent  implements OnInit, AfterViewInit {
   greetingMessage = "";
   db!: Database;
   inputLog = signal<Chat[]>([]);
@@ -106,16 +89,10 @@ export class AppComponent  implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
-  ngOnDestroy() {
-
-    // this.store.set('model', this.selectedModel());
-  }
-
   async ngAfterViewInit() {
     this.db = await Database.load("sqlite:mydatabase.db");
     const now = new Date();
     now.setMonth(now.getMonth() - 1);
-    const prevMonth = now.toLocaleDateString();
     const result = await this.db.select<ChatLog[]>("SELECT * from chat_logs where created_at > datetime('now', '-1 month') order by created_at asc");
     this.inputLog.update((value) => {
       const data = result.map((db) => ({

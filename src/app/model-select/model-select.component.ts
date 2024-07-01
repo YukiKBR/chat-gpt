@@ -1,8 +1,7 @@
 import { Component, ElementRef, HostListener, input, model, signal,  } from '@angular/core';
 import OpenAI from 'openai';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Output } from '@angular/core';
 
 @Component({
   selector: 'app-model-select',

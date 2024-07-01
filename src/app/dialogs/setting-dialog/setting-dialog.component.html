@@ -19,27 +19,5 @@
                 </button>
             </div>
         </div>
-
-
-        <div class="p-4">
-            <h4>models</h4>
-
-
-            <div>
-                <select name="" id="" [formControl]="form.controls.model">
-                    @for(model of chatModels(); track model.id) {
-                        <option [value]="model.id">
-                            {{ model.id }}
-                        </option>
-                    }
-                </select>
-                <div>
-                    <button class="p-2 py-1 bg-blue-500 text-white rounded-lg" (click)="saveChatModel()">
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>
-        
     </div>
 </div>
