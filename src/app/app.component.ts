@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, effect, model, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, model, signal } from '@angular/core';
 import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS, DatePipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import Database from "tauri-plugin-sql-api";
@@ -43,7 +43,6 @@ export class AppComponent  implements OnInit, AfterViewInit {
   inputLog = signal<Chat[]>([]);
   loading = signal<boolean>(false);
   models = signal<OpenAI.Models.Model[]>([]);
-  selectedModel = model<string | null>(null);
   apiKey = signal<string | null>(null);
   input = model<string>('');
   openai!: OpenAI
@@ -58,9 +57,10 @@ export class AppComponent  implements OnInit, AfterViewInit {
   }
   async ngOnInit() {
     this.store = new Store("/settings.bat");
+  }
+
+  async ngAfterViewInit() {
     const apiKey = await this.store.get<string>('api-key');
-    const model = await this.store.get<string>('model');
-    this.selectedModel.set(model);
 
     this.apiKey.set(apiKey)
 
@@ -69,17 +69,11 @@ export class AppComponent  implements OnInit, AfterViewInit {
         apiKey,
         dangerouslyAllowBrowser: true,
       })
+
+      const models = await this.openai.models.list()
+      this.models.set(models.data.filter((model) => model.id.includes('gpt')));
     }
 
-    const models = await this.openai.models.list()
-    this.models.set(models.data.filter((model) => model.id.includes('gpt')));
-
-    effect(async () => {
-      await this.store.set('model', this.selectedModel());
-    })
-  }
-
-  async ngAfterViewInit() {
     this.db = await Database.load("sqlite:mydatabase.db");
     const now = new Date();
     now.setMonth(now.getMonth() - 1);

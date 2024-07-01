@@ -7,7 +7,7 @@
     <div class="flex items-center">
       @defer() {
         @if(apiKey()) {
-          <app-model-select class="w-60" [models]="models()" [(value)]="selectedModel"></app-model-select>
+          <app-model-select class="w-60" [models]="models()"></app-model-select>
         } @else {
           <div class="flex gap-4 items-center">
             <span class="material-symbols-outlined">
