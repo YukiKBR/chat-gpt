@@ -1,0 +1,45 @@
+<div class="bg-slate-400 h-full w-full p-2 px-4 rounded-lg">
+    <div class="flex justify-end">
+        <button class="text-white bg-slate-500 hover:bg-slate-600 transition-colors rounded-full w-10 h-10" (click)="dialogRef.close()">
+            <div class="flex justify-center items-center">
+                <span class="material-icons">close</span>
+            </div>
+        </button>
+    </div>
+    
+    <div>
+        <div class="p-4">
+            <h4>ApiKey</h4>
+            <div>
+                <input class="bg-slate-500 p-1 rounded-lg w-full text-white" type="text" [formControl]="form.controls.apiKey">
+            </div>
+            <div>
+                <button class="p-2 py-1 bg-blue-500 text-white rounded-lg" (click)="saveApikey()">
+                    Save
+                </button>
+            </div>
+        </div>
+
+
+        <div class="p-4">
+            <h4>models</h4>
+
+
+            <div>
+                <select name="" id="" [formControl]="form.controls.model">
+                    @for(model of chatModels(); track model.id) {
+                        <option [value]="model.id">
+                            {{ model.id }}
+                        </option>
+                    }
+                </select>
+                <div>
+                    <button class="p-2 py-1 bg-blue-500 text-white rounded-lg" (click)="saveChatModel()">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>

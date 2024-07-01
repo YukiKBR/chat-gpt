@@ -1,0 +1,1 @@
+CREATE TABLE chat_logs (id char(38) PRIMARY KEY DEFAULT(printf('{%s-%s-%s-%s-%s}', lower(hex(randomblob(4))), lower(hex(randomblob(2))), lower(hex(randomblob(2))), lower(hex(randomblob(2))), lower(hex(randomblob(6))))), message TEXT, type TEXT,     created_at TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime')), updated_at TEXT NOT NULL DEFAULT (DATETIME('now', 'localtime')))

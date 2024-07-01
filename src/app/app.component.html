@@ -1,0 +1,84 @@
+<div class="h-full w-full flex flex-col bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+  <div class="basis-16 flex gap-8">
+    <button (click)="openDialog()" class="dark:text-slate-200">
+      <span class="material-icons ">settings</span>
+    </button>
+
+    <div class="flex items-center">
+      @defer() {
+        @if(apiKey()) {
+          <app-model-select class="w-60" [models]="models()" [(value)]="selectedModel"></app-model-select>
+        } @else {
+          <div class="flex gap-4 items-center">
+            <span class="material-symbols-outlined">
+              error
+              </span>
+              <div>API key is not set</div>
+          </div>
+        }
+      } @placeholder(minimum 2s) {
+        <div class="animate-pulse bg-slate-400 dark:bg-slate-600 h-8 w-48 rounded-lg"></div>
+      }
+
+    </div>
+  </div>
+  <div #chatList class="flex-1 overflow-y-auto dark:bg-slate-800 dark:text-slate-200">
+    <div class="p-4 h-full w-full">
+        <div class="flex-1 flex flex-col justify-start gap-12">
+          @for(log of inputLog(); track log) {
+            @if(log.type === 'user') {
+              <div @fadeIn>
+                <div class="flex gap-4 items-center group">
+                  <span class="material-symbols-outlined">
+                    person
+                    </span>
+                    <div>User</div>
+                    <div class="text-xs opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all">{{ log.timestamp | date: 'yy-MM-dd hh:mm:ss'}}</div>
+                </div>
+                <div class="rounded-lg p-2">
+                  <app-chat [message]="log.msg"></app-chat>
+                </div>
+              </div>
+
+            } @else {
+              <div @fadeIn>
+                <div class="flex gap-4">
+                  <span class="material-symbols-outlined">
+                    robot_2
+                    </span>
+                    <div>Bot</div>
+                </div>
+                <div class="rounded-lg p-2">
+                  <app-chat [message]="log.msg" class="break-words"></app-chat>
+                </div>
+              </div>
+            }
+          }
+
+          @if(loading()) {
+            <div class="flex justify-center">
+              <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-slate-400 dark:border-slate-600"></div>
+            </div>
+          }
+        </div>
+    </div>
+  </div>
+  <div class="px-4 py-2">
+    <div class="rounded-lg border border-slate-400 dark:border-slate-600">
+      <textarea rows="2" class="w-full bg-transparent  rounded-lg p-1 resize-none outline-none" placeholder="enter text" [(ngModel)]="input" (keydown.control.enter)="send()"></textarea>
+      <div class="flex justify-end p-2">
+        <div>
+          <button #tooltip="matTooltip" matTooltip="Ctrl + Enterで送信" matTooltipPosition="above" [matTooltipShowDelay]="500" [matTooltipHideDelay]="300" class=" px-2 py-1 rounded-lg text-green-600 cursor-pointer disabled:cursor-default hover:bg-slate-100 active:bg-slate-300 transition-colors disabled:text-slate-200 disabled:bg-transparent" (click)="send()"[disabled]="!input().length">
+            <div class="flex items-center">
+              <span class="material-symbols-outlined">
+                send
+                </span>
+            </div>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
