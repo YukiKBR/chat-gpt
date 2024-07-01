@@ -7,10 +7,10 @@ import {Dialog, DialogModule} from '@angular/cdk/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { SettingDialogComponent } from './dialogs/setting-dialog/setting-dialog.component';
 import OpenAI from 'openai';
-import { Store } from 'tauri-plugin-store-api';
 import { ChatComponent } from './chat/chat.component';
 import hljs from 'highlight.js';
 import { ModelSelectComponent } from './model-select/model-select.component';
+import { StoreService } from './store.service';
 
 type UserType = 'user' | 'bot';
 
@@ -37,7 +37,7 @@ type ChatLog = {
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
-export class AppComponent  implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
   greetingMessage = "";
   db!: Database;
   inputLog = signal<Chat[]>([]);
@@ -46,20 +46,17 @@ export class AppComponent  implements OnInit, AfterViewInit {
   apiKey = signal<string | null>(null);
   input = model<string>('');
   openai!: OpenAI
-  store!: Store;
 
   @ViewChild('chatList', { static: false }) chatList!: ElementRef<HTMLElement>;
 
   constructor(
     private dialog: Dialog,
+    private store: StoreService
   ) {
     hljs.highlightAll();
   }
-  async ngOnInit() {
-    this.store = new Store("/settings.bat");
-  }
 
-  async ngAfterViewInit() {
+  async ngOnInit() {
     const apiKey = await this.store.get<string>('api-key');
 
     this.apiKey.set(apiKey)
@@ -73,7 +70,9 @@ export class AppComponent  implements OnInit, AfterViewInit {
       const models = await this.openai.models.list()
       this.models.set(models.data.filter((model) => model.id.includes('gpt')));
     }
+  }
 
+  async ngAfterViewInit() {
     this.db = await Database.load("sqlite:mydatabase.db");
     const now = new Date();
     now.setMonth(now.getMonth() - 1);
@@ -97,6 +96,10 @@ export class AppComponent  implements OnInit, AfterViewInit {
       width: '100%',
       height: '100%'
     });
+
+    dialogRef.closed.subscribe(async () => {
+      await this.ngOnInit();
+    })
   }
 
   async send() {

@@ -2,7 +2,7 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import OpenAI from 'openai';
-import { Store } from "tauri-plugin-store-api";
+import { StoreService } from '../../store.service';
 
 @Component({
   selector: 'app-setting-dialog',
@@ -16,13 +16,11 @@ export class SettingDialogComponent implements OnInit {
     apiKey: new FormControl(),
   })
 
-  store!: Store
   openai!: OpenAI;
 
-  constructor(public dialogRef: DialogRef<SettingDialogComponent>) {}
+  constructor(public dialogRef: DialogRef<SettingDialogComponent>, private store: StoreService) {}
 
   async ngOnInit() {
-    this.store = new Store("/settings.bat");
     const apiKey = await this.store.get<string>('api-key');
     this.form.patchValue({
       apiKey,

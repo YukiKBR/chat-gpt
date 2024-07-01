@@ -1,8 +1,8 @@
-import { Component, ElementRef, HostListener, OnInit, input, model, signal,  } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, input, model, signal } from '@angular/core';
 import OpenAI from 'openai';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Store } from 'tauri-plugin-store-api';
+import { StoreService } from '../store.service';
 
 @Component({
   selector: 'app-model-select',
@@ -15,15 +15,10 @@ export class ModelSelectComponent implements OnInit {
   models = input<OpenAI.Models.Model[]>([]);
   value = model<string | null>('');
   focused = signal<boolean>(false);
-  store!: Store;
-  
 
-  constructor(private _eref: ElementRef) {
-    
-  }
+  constructor(private _eref: ElementRef, private store: StoreService) { }
 
   async ngOnInit() {
-    this.store = new Store("/settings.bat");
     const model = await this.store.get<string | null>('model');
     this.value.set(model ?? null);
   }
